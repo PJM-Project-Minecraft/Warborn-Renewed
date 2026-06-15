@@ -1106,5 +1106,91 @@ public class WarbornArmorSets {
                                 .attribute(ArmorAttributeSpec.protectionClass(0))
                                 .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
         );
+
+        // Sosna (Forest / Pine)
+        WarbornArmorRegistry.registerSet(
+                WarbornArmorSet.builder("ghillie-sosna")
+                        .helmet(piece -> piece
+                                .registryName("ghillie-helmet-sosna")
+                                .material(type -> ModArmorMaterials.LEATHER)
+                                .visuals(spec -> spec
+                                        .model("warbornrenewed:geo/ghillie-helmet.geo.json")
+                                        .texture("warbornrenewed:textures/ghille_sosna.png"))
+                                .properties(props -> props.stacksTo(1).rarity(Rarity.UNCOMMON))
+                                .bulletResistance(0.0D)
+                                .attribute(ArmorAttributeSpec.protectionClass(0))
+                                .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
+                        .chestplate(piece -> piece
+                                .registryName("ghillie-body-sosna")
+                                .material(type -> ModArmorMaterials.LEATHER)
+                                .visuals(spec -> spec
+                                        .model("warbornrenewed:geo/ghillie-body.geo.json")
+                                        .texture("warbornrenewed:textures/ghille_sosna.png"))
+                                .bones(bones -> bones
+                                        .body("armorBody")
+                                        .rightArm("armorRightArm")
+                                        .leftArm("armorLeftArm"))
+                                .properties(props -> props.stacksTo(1).rarity(Rarity.UNCOMMON))
+                                .bulletResistance(0.0D)
+                                .attribute(ArmorAttributeSpec.protectionClass(0))
+                                .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
+                        .leggings(piece -> piece
+                                .registryName("ghillie-legs-sosna")
+                                .material(type -> ModArmorMaterials.LEATHER)
+                                .visuals(spec -> spec
+                                        .model("warbornrenewed:geo/ghillie-legs.geo.json")
+                                        .texture("warbornrenewed:textures/ghille_sosna.png"))
+                                .bones(bones -> bones
+                                        .body("armorBody")
+                                        .rightLeg("armorRightLeg")
+                                        .leftLeg("armorLeftLeg"))
+                                .properties(props -> props.stacksTo(1).rarity(Rarity.UNCOMMON))
+                                .bulletResistance(0.0D)
+                                .attribute(ArmorAttributeSpec.protectionClass(0))
+                                .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
+        );
+
+        // Autumn
+        WarbornArmorRegistry.registerSet(
+                WarbornArmorSet.builder("ghillie-autumn")
+                        .helmet(piece -> piece
+                                .registryName("ghillie-helmet-autumn")
+                                .material(type -> ModArmorMaterials.LEATHER)
+                                .visuals(spec -> spec
+                                        .model("warbornrenewed:geo/ghillie-helmet.geo.json")
+                                        .texture("warbornrenewed:textures/ghille_autmn.png"))
+                                .properties(props -> props.stacksTo(1).rarity(Rarity.UNCOMMON))
+                                .bulletResistance(0.0D)
+                                .attribute(ArmorAttributeSpec.protectionClass(0))
+                                .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
+                        .chestplate(piece -> piece
+                                .registryName("ghillie-body-autumn")
+                                .material(type -> ModArmorMaterials.LEATHER)
+                                .visuals(spec -> spec
+                                        .model("warbornrenewed:geo/ghillie-body.geo.json")
+                                        .texture("warbornrenewed:textures/ghille_autmn.png"))
+                                .bones(bones -> bones
+                                        .body("armorBody")
+                                        .rightArm("armorRightArm")
+                                        .leftArm("armorLeftArm"))
+                                .properties(props -> props.stacksTo(1).rarity(Rarity.UNCOMMON))
+                                .bulletResistance(0.0D)
+                                .attribute(ArmorAttributeSpec.protectionClass(0))
+                                .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
+                        .leggings(piece -> piece
+                                .registryName("ghillie-legs-autumn")
+                                .material(type -> ModArmorMaterials.LEATHER)
+                                .visuals(spec -> spec
+                                        .model("warbornrenewed:geo/ghillie-legs.geo.json")
+                                        .texture("warbornrenewed:textures/ghille_autmn.png"))
+                                .bones(bones -> bones
+                                        .body("armorBody")
+                                        .rightLeg("armorRightLeg")
+                                        .leftLeg("armorLeftLeg"))
+                                .properties(props -> props.stacksTo(1).rarity(Rarity.UNCOMMON))
+                                .bulletResistance(0.0D)
+                                .attribute(ArmorAttributeSpec.protectionClass(0))
+                                .attribute(ArmorAttributeSpec.movementSpeed(0.0D)))
+        );
     }
 }

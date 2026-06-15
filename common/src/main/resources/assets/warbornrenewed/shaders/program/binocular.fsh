@@ -1,4 +1,4 @@
-#version 120
+#version 150
 
 uniform sampler2D DiffuseSampler;
 
@@ -17,8 +17,10 @@ uniform float EdgeDarkening;
 uniform float Brightness;
 uniform float ChromaticAberration; // Сила хроматической аберрации
 
-varying vec2 texCoord;
-varying vec2 oneTexel;
+in vec2 texCoord;
+in vec2 oneTexel;
+
+out vec4 fragColor;
 
 // Fisheye искажение от ЦЕНТРА ЭКРАНА (единое изображение)
 vec2 fisheyeWarp(vec2 uv, float k, float aspect) {
@@ -75,7 +77,7 @@ float vignette(vec2 uv, vec2 centerL, vec2 centerR, float radius, float strength
 }
 
 vec3 sampleRGB(vec2 uv) {
-    return texture2D(DiffuseSampler, clamp(uv, 0.0, 1.0)).rgb;
+    return texture(DiffuseSampler, clamp(uv, 0.0, 1.0)).rgb;
 }
 
 // Хроматическая аберрация - смещение R/G/B каналов
@@ -117,7 +119,7 @@ void main() {
     
     // Если вне маски - чёрный
     if (mask < 0.01) {
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;
     }
     
@@ -151,5 +153,5 @@ void main() {
         color = mix(color, blur, blurMix);
     }
     
-    gl_FragColor = vec4(color * mask, 1.0);
+    fragColor = vec4(color * mask, 1.0);
 }

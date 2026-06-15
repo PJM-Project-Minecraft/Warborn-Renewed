@@ -33,6 +33,14 @@ public interface IPlatformHelper {
      */
     java.nio.file.Path getGameDir();
 
+    /**
+     * Get the current language/locale code (e.g. "en_us", "ru_ru").
+     * On client returns the selected language; on server returns "en_us".
+     */
+    default String getCurrentLocale() {
+        return "en_us";
+    }
+
     // Add methods for handling platform-specific DataComponent access if necessary,
     // though DataComponent manipulation on ItemStack is typically standard vanilla code in 1.20.5+
     

@@ -13,6 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import ru.liko.warbornrenewed.platform.Services;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -66,9 +67,24 @@ public class CustomPackArmorItem extends ArmorItem implements GeoItem {
         public ItemStack getCurrentStack() {
             return this.currentStack;
         }
+
+        @Override
+        public void actuallyRender(com.mojang.blaze3d.vertex.PoseStack poseStack, CustomPackArmorItem animatable, BakedGeoModel model, net.minecraft.client.renderer.RenderType renderType,
+                                 net.minecraft.client.renderer.MultiBufferSource bufferSource, com.mojang.blaze3d.vertex.VertexConsumer buffer, boolean isReRender, float partialTick,
+                                 int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+            ItemStack stack = this.currentStack;
+            if (stack != null && ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(stack)) {
+                int color = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(stack);
+                red = ((color >> 16) & 0xFF) / 255.0F;
+                green = ((color >> 8) & 0xFF) / 255.0F;
+                blue = (color & 0xFF) / 255.0F;
+            }
+            super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+        }
     }
 
-    private static final ResourceLocation FALLBACK_MODEL = new ResourceLocation("warbornrenewed", "geo/armor/default.geo.json");
+    private static final ResourceLocation FALLBACK_MODEL = new ResourceLocation("warbornrenewed", "geo/default_armor.geo.json");
     private static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("warbornrenewed", "textures/armor/default.png");
     private static final ResourceLocation FALLBACK_ANIMATION = new ResourceLocation("warbornrenewed", "animations/default.animation.json");
 
@@ -146,10 +162,10 @@ public class CustomPackArmorItem extends ArmorItem implements GeoItem {
     public Component getName(ItemStack stack) {
         String id = Services.ITEM_DATA.getArmorPackId(stack);
         if (id != null && !id.isEmpty()) {
-            ArmorDef def = WarbornPackManager.getArmorDef(id);
-            if (def != null) {
-                String translationKey = "item.warbornrenewed.pack." + id.replace(":", ".");
-                return Component.translatableWithFallback(translationKey, def.getDisplayName("en_us"));
+            String locale = Services.PLATFORM.getCurrentLocale();
+            String displayName = WarbornPackManager.getDisplayName(id, locale);
+            if (displayName != null && !displayName.isEmpty()) {
+                return Component.literal(displayName);
             }
         }
         return super.getName(stack);

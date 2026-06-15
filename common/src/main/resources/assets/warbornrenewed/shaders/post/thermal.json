@@ -8,7 +8,7 @@
       "auxtargets": [
         {
           "name": "NoiseSampler",
-          "id": "warborn:noise",
+          "id": "noise",
           "width": 512,
           "height": 512,
           "bilinear": false

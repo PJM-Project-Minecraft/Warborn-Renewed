@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import net.minecraft.core.component.DataComponentType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import javax.annotation.Nullable;
 
@@ -44,6 +46,16 @@ public class WarbornArmorRenderer extends GeoArmorRenderer<WarbornArmorItem> {
             RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
             boolean isReRender, float partialTick, int packedLight, int packedOverlay,
             int colour) {
+
+        ItemStack stack = this.currentStack;
+        if (stack != null && stack.has(ru.liko.warbornrenewed.registry.ModDataComponents.ARMOR_COLOR.get())) {
+            Integer customColor = stack.get(ru.liko.warbornrenewed.registry.ModDataComponents.ARMOR_COLOR.get());
+            if (customColor != null) {
+                int alpha = colour & 0xFF000000;
+                colour = alpha | (customColor & 0x00FFFFFF);
+            }
+        }
+
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
                 packedLight, packedOverlay, colour);
     }

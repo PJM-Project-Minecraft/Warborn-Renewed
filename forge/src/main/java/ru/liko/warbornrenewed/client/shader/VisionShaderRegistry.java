@@ -157,14 +157,23 @@ public final class VisionShaderRegistry {
             return;
         }
 
-        if (!shaderToActivate.equals(currentActiveShader)) {
+        boolean needsReload = !shaderToActivate.equals(currentActiveShader);
+
+        if (!needsReload && gameRenderer.currentEffect() == null) {
+            needsReload = true;
+        }
+
+        if (needsReload) {
             try {
+                internalShutdownInProgress = true;
                 gameRenderer.loadEffect(entryToActivate.shaderLocation);
                 currentActiveShader = shaderToActivate;
             } catch (Exception e) {
                 LOGGER.error("Failed to load shader {}", shaderToActivate, e);
-                shutdownCurrent(minecraft);
+                currentActiveShader = null;
                 return;
+            } finally {
+                internalShutdownInProgress = false;
             }
         }
 

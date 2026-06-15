@@ -36,7 +36,7 @@ public class GameRendererMixin {
 
     @Inject(method = "checkEntityPostEffect", at = @At("HEAD"), cancellable = true)
     private void warbornrenewed$keepVisionShader(net.minecraft.world.entity.Entity entity, CallbackInfo ci) {
-        if (warbornrenewed$isVisionPostEffectActive() && warbornrenewed$isWarbornEffect(this.postEffect)) {
+        if (warbornrenewed$isVisionPostEffectActive()) {
             ci.cancel();
         }
     }
@@ -44,8 +44,7 @@ public class GameRendererMixin {
     @Inject(method = "shutdownEffect", at = @At("HEAD"), cancellable = true)
     private void warbornrenewed$preventExternalShutdown(CallbackInfo ci) {
         if (warbornrenewed$isVisionPostEffectActive()
-                && !VisionShaderRegistry.getInstance().isInternalShutdownInProgress()
-                && warbornrenewed$isWarbornEffect(this.postEffect)) {
+                && !VisionShaderRegistry.getInstance().isInternalShutdownInProgress()) {
             ci.cancel();
         }
     }
@@ -53,14 +52,5 @@ public class GameRendererMixin {
     @Unique
     private boolean warbornrenewed$isVisionPostEffectActive() {
         return VisionShaderRegistry.getInstance().isShaderActive();
-    }
-
-    @Unique
-    private boolean warbornrenewed$isWarbornEffect(@Nullable PostChain effect) {
-        if (effect == null) {
-            return false;
-        }
-        String effectName = effect.getName();
-        return effectName != null && effectName.contains(WarbornRenewed.MODID);
     }
 }

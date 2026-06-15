@@ -1,4 +1,4 @@
-#version 120
+#version 150
 
 uniform sampler2D DiffuseSampler;
 uniform sampler2D NoiseSampler;
@@ -6,8 +6,10 @@ uniform float Time;
 uniform float IntensityAdjust;
 uniform vec2 InSize;
 
-varying vec2 texCoord;
-varying vec2 oneTexel;
+in vec2 texCoord;
+in vec2 oneTexel;
+
+out vec4 fragColor;
 
 // Константы для кругового поля зрения (меньший круг)
 const float CIRCLE_RADIUS = 0.35;      // Уменьшенный радиус круга
@@ -66,7 +68,7 @@ void main() {
         distortedCoord = clamp(distortedCoord, 0.0, 1.0);
     }
 
-    vec4 texColor = texture2D(DiffuseSampler, distortedCoord);
+    vec4 texColor = texture(DiffuseSampler, distortedCoord);
 
     // Gamma коррекция для поднятия теней (как в оригинале)
     texColor.rgb = pow(texColor.rgb, vec3(0.5)) * BRIGHTNESS;
@@ -75,7 +77,7 @@ void main() {
     vec2 uv;
     uv.x = 0.35 * sin(Time * 10.0);
     uv.y = 0.35 * cos(Time * 10.0);
-    vec3 noise = texture2D(NoiseSampler, distortedCoord + uv).rgb * NOISE_AMPLIFICATION;
+    vec3 noise = texture(NoiseSampler, distortedCoord + uv).rgb * NOISE_AMPLIFICATION;
     texColor.xy += noise.xy * NOISE_AMOUNT;
 
     // Применяем виньетку
@@ -100,5 +102,5 @@ void main() {
         texColor = vec4(0.0, 0.0, 0.0, 1.0);
     }
 
-    gl_FragColor = vec4(texColor.rgb, 1.0);
+    fragColor = vec4(texColor.rgb, 1.0);
 }

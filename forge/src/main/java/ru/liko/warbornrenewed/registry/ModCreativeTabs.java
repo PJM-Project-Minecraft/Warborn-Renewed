@@ -16,7 +16,7 @@ public final class ModCreativeTabs {
 
     public static final RegistryObject<CreativeModeTab> ARMOR = TABS.register("armor",
             () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.WarbornRenewed.armor"))
+                    .title(Component.translatable("itemGroup.warbornrenewed.armor"))
                     .icon(() -> ModItems.armorPieces().stream()
                             .findFirst()
                             .map(entry -> new ItemStack(entry.get()))

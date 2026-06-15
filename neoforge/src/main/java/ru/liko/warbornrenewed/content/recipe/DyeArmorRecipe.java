@@ -68,11 +68,19 @@ public class DyeArmorRecipe extends CustomRecipe {
                 if (stack.getItem() instanceof WarbornArmorItem armorItem) {
                     armor = stack.copy();
                     armor.setCount(1);
-                    // Color system not yet implemented for WarbornArmorItem in 1.21.1
+                    if (ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(armor)) {
+                        int existingColor = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(armor);
+                        int r = (existingColor >> 16) & 0xFF;
+                        int g = (existingColor >> 8) & 0xFF;
+                        int b = existingColor & 0xFF;
+                        totalRed += r;
+                        totalGreen += g;
+                        totalBlue += b;
+                        colorCount++;
+                    }
                 } else if (stack.getItem() instanceof DyeItem dyeItem) {
-                    // Get dye color - use getMapColor for 1.21.1
                     DyeColor dyeColor = dyeItem.getDyeColor();
-                    int color = dyeColor.getMapColor().col;
+                    int color = dyeColor.getTextColor();
                     int r = (color >> 16) & 0xFF;
                     int g = (color >> 8) & 0xFF;
                     int b = color & 0xFF;
@@ -88,14 +96,43 @@ public class DyeArmorRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         }
 
-        // Calculate average color
         int avgRed = totalRed / colorCount;
         int avgGreen = totalGreen / colorCount;
         int avgBlue = totalBlue / colorCount;
+        
+        // Find maximum color component across all added colors to preserve vibrance (vanilla logic)
+        int maxColorSum = 0;
+        if (ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(armor)) {
+            int existingColor = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(armor);
+            int r = (existingColor >> 16) & 0xFF;
+            int g = (existingColor >> 8) & 0xFF;
+            int b = existingColor & 0xFF;
+            maxColorSum += Math.max(r, Math.max(g, b));
+        }
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
+            if (!stack.isEmpty() && stack.getItem() instanceof DyeItem dyeItem) {
+                int color = dyeItem.getDyeColor().getTextColor();
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+                maxColorSum += Math.max(r, Math.max(g, b));
+            }
+        }
+        
+        float averageMax = (float) maxColorSum / (float) colorCount;
+        float maxAverage = (float) Math.max(avgRed, Math.max(avgGreen, avgBlue));
+        
+        if (maxAverage > 0.0F) {
+            avgRed = (int) ((float) avgRed * averageMax / maxAverage);
+            avgGreen = (int) ((float) avgGreen * averageMax / maxAverage);
+            avgBlue = (int) ((float) avgBlue * averageMax / maxAverage);
+        }
+
         int newColor = (avgRed << 16) | (avgGreen << 8) | avgBlue;
 
-        // Apply color to armor - TODO: Implement with DataComponents in 1.21.1
-        // For now, return the armor without color modification
+        ru.liko.warbornrenewed.platform.Services.ITEM_DATA.setArmorColor(armor, newColor);
+        
         return armor;
     }
 

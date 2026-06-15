@@ -24,10 +24,11 @@ public class WarbornArmorRenderer extends GeoArmorRenderer<WarbornArmorItem> {
     public ResourceLocation getTextureLocation(WarbornArmorItem animatable) {
         ItemStack stack = this.currentStack;
         if (stack != null) {
-            // TODO: Check for variant using DataComponents in 1.21.1
-            String variant = ""; // Placeholder
-            if (!variant.isEmpty() && visuals.variants().containsKey(variant)) {
-                return visuals.variants().get(variant);
+            if (stack.hasTag() && stack.getTag().contains(WarbornArmorItem.TAG_VARIANT)) {
+                String variant = stack.getTag().getString(WarbornArmorItem.TAG_VARIANT);
+                if (!variant.isEmpty() && visuals.variants().containsKey(variant)) {
+                    return visuals.variants().get(variant);
+                }
             }
         }
         return super.getTextureLocation(animatable);
@@ -44,6 +45,13 @@ public class WarbornArmorRenderer extends GeoArmorRenderer<WarbornArmorItem> {
             RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
             boolean isReRender, float partialTick, int packedLight, int packedOverlay,
             float red, float green, float blue, float alpha) {
+        ItemStack stack = this.currentStack;
+        if (stack != null && ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(stack)) {
+            int color = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(stack);
+            red = ((color >> 16) & 0xFF) / 255.0F;
+            green = ((color >> 8) & 0xFF) / 255.0F;
+            blue = (color & 0xFF) / 255.0F;
+        }
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
                 packedLight, packedOverlay, red, green, blue, alpha);
     }

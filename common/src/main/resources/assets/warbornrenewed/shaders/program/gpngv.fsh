@@ -1,4 +1,4 @@
-#version 120
+#version 150
 
 uniform sampler2D DiffuseSampler;
 uniform sampler2D NoiseSampler;
@@ -23,8 +23,10 @@ uniform float HighNoiseExp;
 uniform float BaseNoiseGain;
 uniform float HighNoiseGain;
 
-varying vec2 texCoord;
-varying vec2 oneTexel;
+in vec2 texCoord;
+in vec2 oneTexel;
+
+out vec4 fragColor;
 
 vec2 fisheyeWarp(vec2 uv, vec2 center, float k, float aspect){
     vec2 p = uv - center;
@@ -53,7 +55,7 @@ float tubeEdgeFactor(vec2 uv, vec2 center, float radius, float aspect){
 }
 
 vec3 sampleRGB(vec2 uv){
-    return texture2D(DiffuseSampler, clamp(uv, 0.0, 1.0)).rgb;
+    return texture(DiffuseSampler, clamp(uv, 0.0, 1.0)).rgb;
 }
 
 // WHITE PHOSPHOR тонемап с засветом при ярком свете
@@ -163,5 +165,5 @@ void main(){
     vec3 col = (cL_col * mL + cC_col * mC + cR_col * mR) / sumM;
     float mask = clamp(sumM, 0.0, 1.0);
 
-    gl_FragColor = vec4(col * mask, mask);
+    fragColor = vec4(col * mask, mask);
 }

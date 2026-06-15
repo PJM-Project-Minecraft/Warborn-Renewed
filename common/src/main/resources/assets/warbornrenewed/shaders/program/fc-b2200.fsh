@@ -1,4 +1,4 @@
-#version 120
+#version 150
 
 uniform sampler2D DiffuseSampler;
 uniform sampler2D NoiseSampler;
@@ -16,8 +16,10 @@ uniform float PixelNoiseSize;
 uniform float BloomThreshold;
 uniform float BloomIntensity;
 
-varying vec2 texCoord;
-varying vec2 oneTexel;
+in vec2 texCoord;
+in vec2 oneTexel;
+
+out vec4 fragColor;
 
 // Константы
 const float CONTRAST = 0.8;
@@ -57,7 +59,7 @@ float tubeMask(vec2 uv, vec2 center, float radius, float softness, float aspect)
 }
 
 vec3 sampleRGB(vec2 uv) {
-    return texture2D(DiffuseSampler, clamp(uv, 0.0, 1.0)).rgb;
+    return texture(DiffuseSampler, clamp(uv, 0.0, 1.0)).rgb;
 }
 
 float rnd(vec2 st) {
@@ -96,7 +98,7 @@ vec3 processCircle(vec2 uv, vec2 center, float aspect) {
     vec2 distortedCoord = fishEyeDistort(uv, center, TubeFisheye, TubeRadius, aspect);
     distortedCoord = clamp(distortedCoord, 0.0, 1.0);
     
-    vec4 texColor = texture2D(DiffuseSampler, distortedCoord);
+    vec4 texColor = texture(DiffuseSampler, distortedCoord);
     
     // Gamma коррекция для поднятия теней (как в pnv10t)
     texColor.rgb = pow(texColor.rgb, vec3(0.5)) * Brightness;
@@ -105,7 +107,7 @@ vec3 processCircle(vec2 uv, vec2 center, float aspect) {
     vec2 noiseUV;
     noiseUV.x = 0.35 * sin(Time * 10.0);
     noiseUV.y = 0.35 * cos(Time * 10.0);
-    vec3 noise = texture2D(NoiseSampler, distortedCoord + noiseUV).rgb * NoiseAmplification;
+    vec3 noise = texture(NoiseSampler, distortedCoord + noiseUV).rgb * NoiseAmplification;
     texColor.xy += noise.xy * NOISE_AMOUNT;
     
     // Конвертируем в ночное видение (как в pnv10t)
@@ -150,5 +152,5 @@ void main() {
     float mask = max(maskL, maskR);
     vec3 finalColor = mix(colorR, colorL, step(maskR, maskL));
     
-    gl_FragColor = vec4(finalColor * mask, mask);
+    fragColor = vec4(finalColor * mask, mask);
 }

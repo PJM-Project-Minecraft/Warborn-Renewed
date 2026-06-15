@@ -15,5 +15,4 @@ plugins {
 rootProject.name = 'warbornrenewed'
 
 include 'common'
-include 'forge'
 include 'neoforge'

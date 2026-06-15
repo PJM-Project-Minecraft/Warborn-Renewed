@@ -62,6 +62,16 @@ public class DyeArmorRecipe extends CustomRecipe {
                 if (stack.getItem() instanceof WarbornArmorItem) {
                     armor = stack.copy();
                     armor.setCount(1);
+                    if (ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(armor)) {
+                        int existingColor = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(armor);
+                        int r = (existingColor >> 16) & 0xFF;
+                        int g = (existingColor >> 8) & 0xFF;
+                        int b = existingColor & 0xFF;
+                        totalRed += r;
+                        totalGreen += g;
+                        totalBlue += b;
+                        colorCount++;
+                    }
                 } else if (stack.getItem() instanceof DyeItem dyeItem) {
                     DyeColor dyeColor = dyeItem.getDyeColor();
                     int color = dyeColor.getTextColor();
@@ -83,7 +93,39 @@ public class DyeArmorRecipe extends CustomRecipe {
         int avgRed = totalRed / colorCount;
         int avgGreen = totalGreen / colorCount;
         int avgBlue = totalBlue / colorCount;
+
+        // Preserve color vibrance using vanilla blending logic
+        int maxColorSum = 0;
+        if (ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(armor)) {
+            int existingColor = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(armor);
+            int r = (existingColor >> 16) & 0xFF;
+            int g = (existingColor >> 8) & 0xFF;
+            int b = existingColor & 0xFF;
+            maxColorSum += Math.max(r, Math.max(g, b));
+        }
+        for (int i = 0; i < input.getContainerSize(); i++) {
+            ItemStack stack = input.getItem(i);
+            if (!stack.isEmpty() && stack.getItem() instanceof DyeItem dyeItem) {
+                int color = dyeItem.getDyeColor().getTextColor();
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+                maxColorSum += Math.max(r, Math.max(g, b));
+            }
+        }
+
+        float averageMax = (float) maxColorSum / (float) colorCount;
+        float maxAverage = (float) Math.max(avgRed, Math.max(avgGreen, avgBlue));
+
+        if (maxAverage > 0.0F) {
+            avgRed = (int) ((float) avgRed * averageMax / maxAverage);
+            avgGreen = (int) ((float) avgGreen * averageMax / maxAverage);
+            avgBlue = (int) ((float) avgBlue * averageMax / maxAverage);
+        }
+
         int newColor = (avgRed << 16) | (avgGreen << 8) | avgBlue;
+
+        ru.liko.warbornrenewed.platform.Services.ITEM_DATA.setArmorColor(armor, newColor);
 
         return armor;
     }

@@ -31,7 +31,7 @@ public class ModAttributes {
         public static final RegistryObject<Attribute> BULLET_RESISTANCE = ATTRIBUTES.register(
                         "bullet_resistance",
                         () -> new RangedAttribute(
-                                        "attribute.WarbornRenewed.bullet_resistance",
+                                        "attribute.warbornrenewed.bullet_resistance",
                                         0.0D, // Базовое значение
                                         0.0D, // Минимум
                                         1.0D // Максимум (100%)
@@ -55,7 +55,7 @@ public class ModAttributes {
         public static final RegistryObject<Attribute> PROTECTION_CLASS = ATTRIBUTES.register(
                         "protection_class",
                         () -> new RangedAttribute(
-                                        "attribute.WarbornRenewed.protection_class",
+                                        "attribute.warbornrenewed.protection_class",
                                         0.0D, // Базовое значение (нет защиты)
                                         0.0D, // Минимум
                                         6.0D // Максимум (специальная защита)
@@ -74,7 +74,7 @@ public class ModAttributes {
         public static final RegistryObject<Attribute> BLAST_DAMAGE_MULTIPLIER = ATTRIBUTES.register(
                         "blast_damage_multiplier",
                         () -> new RangedAttribute(
-                                        "attribute.WarbornRenewed.blast_damage_multiplier",
+                                        "attribute.warbornrenewed.blast_damage_multiplier",
                                         1.0D, // Базовое значение (нормальный урон)
                                         0.0D, // Минимум (полная защита)
                                         2.0D // Максимум (двойной урон)
@@ -92,7 +92,7 @@ public class ModAttributes {
         public static final RegistryObject<Attribute> ARMOR_MOVEMENT_SPEED = ATTRIBUTES.register(
                         "armor_movement_speed",
                         () -> new RangedAttribute(
-                                        "attribute.WarbornRenewed.armor_movement_speed",
+                                        "attribute.warbornrenewed.armor_movement_speed",
                                         0.0D, // Базовое значение (без изменений)
                                         -0.5D, // Минимум (-50% скорости)
                                         0.2D // Максимум (+20% скорости)

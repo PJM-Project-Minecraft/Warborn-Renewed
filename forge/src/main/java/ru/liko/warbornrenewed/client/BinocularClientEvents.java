@@ -10,6 +10,8 @@ import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import ru.liko.warbornrenewed.WarbornRenewed;
 import ru.liko.warbornrenewed.content.item.BinocularItem;
 
+import javax.annotation.Nullable;
+
 /**
  * Клиентские события для бинокля - FOV модификатор (zoom)
  */
@@ -20,10 +22,18 @@ public class BinocularClientEvents {
     // Коэффициент увеличения бинокля (0.1 = 10x zoom)
     private static final float BINOCULAR_FOV_MODIFIER = 0.1f;
 
+    /** Множитель чувствительности мыши при зуме бинокля (меньше = спокойнее прицел). */
+    public static final double BINOCULAR_LOOK_SENS_MULTIPLIER = 0.35;
+
     // Скорость интерполяции zoom (увеличено для быстрого зума)
     private static final float ZOOM_SPEED = 3.0f;
 
     private static float currentZoom = 1.0f;
+
+    public static boolean isUsingBinocular(@Nullable Player player) {
+        return player != null && player.isUsingItem()
+                && player.getUseItem().getItem() instanceof BinocularItem;
+    }
 
     @SubscribeEvent
     public static void onComputeFov(ComputeFovModifierEvent event) {
@@ -33,8 +43,7 @@ public class BinocularClientEvents {
             return;
 
         // Проверяем использует ли игрок бинокль
-        boolean usingBinocular = player.isUsingItem() &&
-                player.getUseItem().getItem() instanceof BinocularItem;
+        boolean usingBinocular = isUsingBinocular(player);
 
         float targetZoom = usingBinocular ? BINOCULAR_FOV_MODIFIER : 1.0f;
 

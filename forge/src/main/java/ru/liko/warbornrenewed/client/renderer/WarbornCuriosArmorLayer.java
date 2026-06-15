@@ -46,7 +46,7 @@ public class WarbornCuriosArmorLayer<T extends LivingEntity, M extends HumanoidM
 
                 try {
                     // Создаем рендерер с правильными костями
-                    WarbornCuriosArmorRenderer armorRenderer = new WarbornCuriosArmorRenderer();
+                    WarbornCuriosArmorRenderer armorRenderer = new WarbornCuriosArmorRenderer(armorItem);
 
                     // Копируем свойства из родительской модели
                     this.getParentModel().copyPropertiesTo(armorRenderer);

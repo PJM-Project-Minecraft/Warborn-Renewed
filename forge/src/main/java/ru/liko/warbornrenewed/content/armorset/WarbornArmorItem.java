@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,13 +40,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class WarbornArmorItem extends ArmorItem implements GeoItem {
+public class WarbornArmorItem extends ArmorItem implements GeoItem, DyeableLeatherItem {
     // ==================== Vision Capability Tags ====================
     public static final String TAG_NVG = "nvg"; // Night Vision Goggles
     public static final String TAG_THERMAL = "thermal"; // Thermal Vision
     public static final String TAG_DIGITAL = "digital"; // Digital overlay
     public static final String TAG_SIMPLE_NVG = "simple_nvg"; // Simple night vision (no animation)
     public static final String TAG_GOGGLE = "goggle"; // Protective goggles
+    public static final String TAG_VARIANT = "armor_variant"; // Texture variant
 
     // NBT keys for helmet state (stored in DataComponents in 1.21.1)
     public static final String NBT_NVG_DOWN = "nvg_down"; // Is NVG flipped down?
@@ -169,14 +171,14 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
             materialName = materialName.substring(materialName.indexOf(':') + 1);
         }
 
-        String materialKey = "material.WarbornRenewed." + materialName;
+        String materialKey = "material.warbornrenewed." + materialName;
         // Material Name in GOLD
         Component materialDisplayName = Component.translatable(materialKey).withStyle(ChatFormatting.GOLD);
 
         tooltipComponents.add(Component.empty());
         // Fix for %s issue: Pass the component as an argument to the translatable
         // component
-        tooltipComponents.add(Component.translatable("tooltip.WarbornRenewed.material", materialDisplayName)
+        tooltipComponents.add(Component.translatable("tooltip.warbornrenewed.material", materialDisplayName)
                 .withStyle(ChatFormatting.GRAY));
 
         // REMOVED: Custom display of Defense, Toughness, and Knockback Resistance
@@ -185,7 +187,7 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
         // Кастомные атрибуты
         if (!attributes.isEmpty()) {
             tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.WarbornRenewed.attributes")
+            tooltipComponents.add(Component.translatable("tooltip.warbornrenewed.attributes")
                     .withStyle(ChatFormatting.AQUA));
 
             for (ArmorAttributeSpec spec : attributes) {
@@ -201,9 +203,9 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
                     valColor = ChatFormatting.GOLD;
 
                     // Use designated translation key for Protection Class if available
-                    // "tooltip.WarbornRenewed.protection_class" -> "Class: %s"
+                    // "tooltip.warbornrenewed.protection_class" -> "Class: %s"
                     tooltipComponents.add(Component.literal("  ")
-                            .append(Component.translatable("tooltip.WarbornRenewed.protection_class",
+                            .append(Component.translatable("tooltip.warbornrenewed.protection_class",
                                     Component.literal(valStr).withStyle(valColor))
                                     .withStyle(ChatFormatting.GRAY)));
                     continue;
@@ -225,17 +227,17 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
         // Vision Capabilities
         if (getType() == Type.HELMET && hasAnyVisionCapability()) {
             tooltipComponents.add(Component.empty());
-            tooltipComponents.add(Component.translatable("tooltip.WarbornRenewed.vision_capabilities")
+            tooltipComponents.add(Component.translatable("tooltip.warbornrenewed.vision_capabilities")
                     .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
 
             if (hasVisionCapability(TAG_NVG)) {
                 tooltipComponents.add(Component.literal("  ► ")
-                        .append(Component.translatable("tooltip.WarbornRenewed.vision.nvg"))
+                        .append(Component.translatable("tooltip.warbornrenewed.vision.nvg"))
                         .withStyle(ChatFormatting.GREEN));
             }
             if (hasVisionCapability(TAG_THERMAL)) {
                 tooltipComponents.add(Component.literal("  ► ")
-                        .append(Component.translatable("tooltip.WarbornRenewed.vision.thermal"))
+                        .append(Component.translatable("tooltip.warbornrenewed.vision.thermal"))
                         .withStyle(ChatFormatting.LIGHT_PURPLE));
             }
 
@@ -243,9 +245,9 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
             if (hasVisionCapability(TAG_NVG)) {
                 boolean nvgDown = isNVGDown(stack);
                 Component statusKey = nvgDown
-                        ? Component.translatable("tooltip.WarbornRenewed.nvg.down").withStyle(ChatFormatting.GREEN)
-                        : Component.translatable("tooltip.WarbornRenewed.nvg.up").withStyle(ChatFormatting.RED);
-                tooltipComponents.add(Component.translatable("tooltip.WarbornRenewed.nvg.status", statusKey)
+                        ? Component.translatable("tooltip.warbornrenewed.nvg.down").withStyle(ChatFormatting.GREEN)
+                        : Component.translatable("tooltip.warbornrenewed.nvg.up").withStyle(ChatFormatting.RED);
+                tooltipComponents.add(Component.translatable("tooltip.warbornrenewed.nvg.status", statusKey)
                         .withStyle(ChatFormatting.GRAY));
             }
         }
@@ -264,8 +266,7 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
      * Check if NVG is currently down (active)
      */
     public static boolean isNVGDown(ItemStack stack) {
-        Boolean value = stack.getOrCreateTag().getBoolean("nvg_down");
-        return value != null && value;
+        return stack.hasTag() && stack.getTag() != null && stack.getTag().getBoolean("nvg_down");
     }
 
     /**
@@ -287,8 +288,7 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
      * Check if helmet visor/top is open
      */
     public static boolean isHelmetOpen(ItemStack stack) {
-        Boolean value = stack.getOrCreateTag().getBoolean("helmet_open");
-        return value != null && value;
+        return stack.hasTag() && stack.getTag() != null && stack.getTag().getBoolean("helmet_open");
     }
 
     /**
@@ -348,14 +348,21 @@ public class WarbornArmorItem extends ArmorItem implements GeoItem {
         allVariants.add("");
         allVariants.addAll(keys);
 
-        // TODO: Implement variant storage with DataComponents
+        String current = getVariant(stack);
+        int index = allVariants.indexOf(current);
+        
+        // Next variant
+        int nextIndex = (index + 1) % allVariants.size();
+        String nextVariant = allVariants.get(nextIndex);
+        
+        stack.getOrCreateTag().putString(TAG_VARIANT, nextVariant);
     }
 
     /**
      * Get the current variant name
      */
     public String getVariant(ItemStack stack) {
-        String variant = stack.getOrCreateTag().getString("armor_variant");
+        String variant = stack.getOrCreateTag().getString(TAG_VARIANT);
         return variant != null ? variant : "";
     }
 }

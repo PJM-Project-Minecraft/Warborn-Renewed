@@ -1,14 +1,9 @@
 package ru.liko.warbornrenewed.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.ItemStack;
 import ru.liko.warbornrenewed.content.armorset.ArmorBonesSpec;
 import ru.liko.warbornrenewed.content.armorset.WarbornArmorItem;
 import ru.liko.warbornrenewed.content.armorset.WarbornArmorModel;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 /**
@@ -29,12 +24,16 @@ public class WarbornCuriosArmorRenderer extends GeoArmorRenderer<WarbornArmorIte
     }
 
     @Override
-    public void actuallyRender(PoseStack poseStack, WarbornArmorItem animatable, BakedGeoModel model,
-            RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
+    public void actuallyRender(com.mojang.blaze3d.vertex.PoseStack poseStack, WarbornArmorItem animatable, software.bernie.geckolib.cache.object.BakedGeoModel model,
+            net.minecraft.client.renderer.RenderType renderType, net.minecraft.client.renderer.MultiBufferSource bufferSource, com.mojang.blaze3d.vertex.VertexConsumer buffer,
             boolean isReRender, float partialTick, int packedLight, int packedOverlay,
             int colour) {
-        // Color is passed as packed ARGB in 1.21.1 GeckoLib
-        // TODO: Implement custom color support with DataComponents when available
+        ItemStack stack = this.currentStack;
+        if (stack != null && ru.liko.warbornrenewed.platform.Services.ITEM_DATA.hasArmorColor(stack)) {
+            int customColor = ru.liko.warbornrenewed.platform.Services.ITEM_DATA.getArmorColor(stack);
+            int alpha = colour & 0xFF000000;
+            colour = alpha | (customColor & 0x00FFFFFF);
+        }
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
                 packedLight, packedOverlay, colour);
     }

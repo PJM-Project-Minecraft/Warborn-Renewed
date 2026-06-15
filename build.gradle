@@ -4,7 +4,6 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.42-beta' apply false
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)' apply false
     id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT' apply false
 }
 
@@ -17,11 +16,7 @@ allprojects {
     version = mod_version
     group = mod_group_id
 
-    if (project.name == 'forge') {
-        java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-    } else {
-        java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-    }
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
     repositories {
         mavenCentral()
@@ -50,7 +45,6 @@ allprojects {
             }
         }
 
-        maven { url = "https://maven.minecraftforge.net/" }
         maven { url = "https://maven.neoforged.net/releases/" }
     }
 

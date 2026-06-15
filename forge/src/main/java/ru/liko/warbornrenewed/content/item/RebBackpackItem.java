@@ -66,8 +66,7 @@ public class RebBackpackItem extends Item implements GeoItem {
      * Проверить, включен ли РЭБ
      */
     public static boolean isRebEnabled(ItemStack stack) {
-        Boolean value = stack.getOrCreateTag().getBoolean("warborn_reb");
-        return value != null && value;
+        return stack.hasTag() && stack.getTag() != null && stack.getTag().getBoolean("warborn_reb");
     }
 
     /**

@@ -10,6 +10,9 @@ import ru.liko.warbornrenewed.content.armorset.WarbornArmorItem;
 import ru.liko.warbornrenewed.content.armorset.WarbornArmorModel;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.component.DataComponentType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
  * Простой рендерер для отображения брони Warborn через Curios
@@ -33,8 +36,16 @@ public class WarbornCuriosArmorRenderer extends GeoArmorRenderer<WarbornArmorIte
             RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
             boolean isReRender, float partialTick, int packedLight, int packedOverlay,
             int colour) {
-        // Color is passed as packed ARGB in 1.21.1 GeckoLib
-        // TODO: Implement custom color support with DataComponents when available
+
+        ItemStack stack = this.currentStack;
+        if (stack != null && stack.has(ru.liko.warbornrenewed.registry.ModDataComponents.ARMOR_COLOR.get())) {
+            Integer customColor = stack.get(ru.liko.warbornrenewed.registry.ModDataComponents.ARMOR_COLOR.get());
+            if (customColor != null) {
+                int alpha = colour & 0xFF000000;
+                colour = alpha | (customColor & 0x00FFFFFF);
+            }
+        }
+
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
                 packedLight, packedOverlay, colour);
     }

@@ -22,7 +22,7 @@ public class WarbornConfig {
             armorIsDamageable = builder
                     .comment("Should armor take damage and break? If false, armor will have infinite durability.",
                             "Должна ли броня получать урон и ломаться? Если false, броня будет иметь бесконечную прочность.")
-                    .translation("config.WarbornRenewed.armor_is_damageable")
+                    .translation("config.warbornrenewed.armor_is_damageable")
                     .define("armorIsDamageable", true);
 
             builder.pop();
